@@ -2,7 +2,9 @@
 // static audio/textures — everything is procedural/instanced) so the entire
 // shell fits comfortably in Cache Storage and installs almost instantly.
 const CACHE_NAME = "millipede-shell-v1";
-const SHELL_ASSETS = ["/", "/index.html", "/manifest.json"];
+// Relative to this script's own URL, so precaching works whether the app is
+// served from the domain root or a GitHub Pages subpath like /milipede-pwa/.
+const SHELL_ASSETS = ["./", "./index.html", "./manifest.json"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -35,7 +37,9 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          if (event.request.mode === "navigate") return caches.match("/index.html");
+          if (event.request.mode === "navigate") {
+            return caches.match(new URL("./index.html", self.registration.scope).href);
+          }
           return undefined;
         });
     }),
