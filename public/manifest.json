@@ -1,7 +1,7 @@
 {
   "name": "Millipede: Neon Wireframe",
   "short_name": "Millipede",
-  "description": "A WebGPU/Three.js neon-wireframe reimagining of the 1982 arcade classic Millipede.",
+  "description": "A Three.js neon-wireframe reimagining of the 1982 arcade classic Millipede.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

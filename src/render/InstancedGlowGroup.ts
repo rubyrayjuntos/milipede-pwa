@@ -10,9 +10,11 @@ export class InstancedGlowGroup {
   readonly wireMesh: THREE.InstancedMesh;
   readonly glowMesh: THREE.InstancedMesh;
   private cursor = 0;
+  private readonly maxCount: number;
   private readonly dummy = new THREE.Object3D();
 
   constructor(geometry: THREE.BufferGeometry, color: THREE.ColorRepresentation, maxCount: number, scene: THREE.Scene) {
+    this.maxCount = maxCount;
     this.wireMesh = new THREE.InstancedMesh(geometry, createWireMaterial(color), maxCount);
     this.glowMesh = new THREE.InstancedMesh(geometry, createGlowMaterial(color), maxCount);
     this.wireMesh.count = 0;
@@ -27,6 +29,9 @@ export class InstancedGlowGroup {
   }
 
   push(x: number, y: number, z: number, scale = 1, rotationY = 0): void {
+    // Drop instances past capacity instead of writing out of bounds — a spike
+    // in enemy/reinforcement spawns should never crash the renderer.
+    if (this.cursor >= this.maxCount) return;
     this.dummy.position.set(x, y, z);
     this.dummy.rotation.set(0, rotationY, 0);
     this.dummy.scale.setScalar(scale);

@@ -30,7 +30,7 @@ export class TouchControls {
     el.addEventListener("touchend", this.onTouchEnd, { passive: false });
     el.addEventListener("touchcancel", this.onTouchEnd, { passive: false });
 
-    // Desktop/dev fallback: mouse-left-drag = move, mouse-right/space = fire.
+    // Desktop/dev fallback: left-drag = move, right-click-hold = fire, space = detonate DDT.
     el.addEventListener("mousedown", this.onMouseDown);
     window.addEventListener("mousemove", this.onMouseMove);
     window.addEventListener("mouseup", this.onMouseUp);
@@ -43,6 +43,10 @@ export class TouchControls {
   }
 
   private onTouchStart = (e: TouchEvent): void => {
+    // Let taps on HUD buttons (start/restart) reach their click handlers
+    // normally — preventDefault() here would suppress the synthetic click
+    // mobile browsers synthesize from a tap, making those buttons untappable.
+    if ((e.target as HTMLElement).closest("button")) return;
     e.preventDefault();
     for (const t of Array.from(e.changedTouches)) {
       if (this.isLeftZone(t.clientX)) {

@@ -19,6 +19,7 @@ export class SceneRenderer {
   private composer: EffectComposer;
   private bloomPass: UnrealBloomPass;
   private background: ReturnType<typeof buildBackground>;
+  private clock = new THREE.Clock();
 
   private mushroomGroup: InstancedGlowGroup;
   private millipedeGroup: InstancedGlowGroup;
@@ -111,7 +112,10 @@ export class SceneRenderer {
     this.bloomPass.strength = active ? 3.0 : 1.2;
   }
 
-  render(world: World, dt: number): void {
+  render(world: World): void {
+    // Real elapsed time since last frame, not an assumed 60Hz, so background
+    // drift stays consistent on 120/144Hz displays instead of running 2x fast.
+    const dt = Math.min(0.1, this.clock.getDelta());
     this.background.update(dt);
 
     this.mushroomGroup.begin();

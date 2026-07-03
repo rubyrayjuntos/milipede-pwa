@@ -40,7 +40,9 @@ self.addEventListener("fetch", (event) => {
           if (event.request.mode === "navigate") {
             return caches.match(new URL("./index.html", self.registration.scope).href);
           }
-          return undefined;
+          // respondWith() requires an actual Response; resolving with
+          // undefined throws instead of producing a clean network error.
+          return Response.error();
         });
     }),
   );
@@ -76,15 +78,27 @@ async function flushQueuedScores() {
     req.onerror = () => reject(req.error);
   });
 
+  if (all.length === 0) return;
+
+  // A single transaction, awaited to completion, so `sync`'s waitUntil can't
+  // resolve (and the worker terminate) before the deletions actually commit.
+  const delTx = db.transaction(STORE_NAME, "readwrite");
+  const store = delTx.objectStore(STORE_NAME);
+
   for (const entry of all) {
     try {
       // No live leaderboard backend is configured for this build; this is the
       // hook where a POST to a scores endpoint would go once one exists.
       await Promise.resolve(entry);
-      const delTx = db.transaction(STORE_NAME, "readwrite");
-      delTx.objectStore(STORE_NAME).delete(entry.id);
+      store.delete(entry.id);
     } catch {
       // leave entry queued, will retry on next sync event
     }
   }
+
+  await new Promise((resolve, reject) => {
+    delTx.oncomplete = () => resolve();
+    delTx.onerror = () => reject(delTx.error);
+    delTx.onabort = () => reject(new Error("Transaction aborted"));
+  });
 }

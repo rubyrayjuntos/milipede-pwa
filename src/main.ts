@@ -81,7 +81,7 @@ const loop = new GameLoop(
     audio.setMillipedeProximity(world.millipedeProximity());
   },
   (_alpha) => {
-    sceneRenderer.render(world, 1 / 60);
+    sceneRenderer.render(world);
   },
 );
 loop.start();

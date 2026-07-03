@@ -243,9 +243,12 @@ export class MillipedeSystem {
       }
       if (run.length > 0) runs.push(run);
 
+      let originalReused = false;
       for (const survivors of runs) {
         survivors[0].isHead = true;
         const reuseOriginal = firstRun && survivors.length === chain.segments.length;
+        if (reuseOriginal) originalReused = true;
+
         const newChain: MillipedeChain = reuseOriginal
           ? chain
           : {
@@ -258,11 +261,17 @@ export class MillipedeSystem {
             };
         newChain.segments = survivors;
         for (const s of survivors) s.chainId = newChain.id;
-        if (!this.history.has(newChain.id)) this.history.set(newChain.id, []);
+
+        // Seed the split-off chain's trail from its parent's so body segments
+        // keep following their existing path instead of snapping to the head.
+        if (!reuseOriginal) {
+          this.history.set(newChain.id, [...(this.history.get(chain.id) ?? [])]);
+        }
+
         nextChains.push(newChain);
         firstRun = false;
       }
-      if (runs.length === 0) this.history.delete(chain.id);
+      if (!originalReused) this.history.delete(chain.id);
     }
     this.chains = nextChains;
   }

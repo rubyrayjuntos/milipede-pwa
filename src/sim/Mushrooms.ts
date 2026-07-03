@@ -18,6 +18,7 @@ export class MushroomField {
   }
 
   spawn(col: number, row: number, poisoned = false): void {
+    if (col < 0 || col >= GRID_COLS || row < 0 || row >= GRID_ROWS) return;
     if (this.grid[row][col]) return;
     this.grid[row][col] = { col, row, hits: 0, poisoned, alive: true };
   }
@@ -33,7 +34,7 @@ export class MushroomField {
   }
 
   poison(col: number, row: number): void {
-    const m = this.grid[row][col];
+    const m = this.at(col, row);
     if (m) m.poisoned = true;
   }
 

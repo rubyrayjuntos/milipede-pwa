@@ -44,6 +44,7 @@ export class World {
   projectiles = new ProjectileSystem();
   player = createPlayer();
   rng = new RNG(Date.now() >>> 0);
+  private spatialHash = new SpatialHash<HashEntry>(1.5, 1.5, Math.ceil(GRID_COLS / 1.5) + 4);
 
   score = 0;
   wave = 1;
@@ -217,7 +218,8 @@ export class World {
   }
 
   private resolveCollisions(): void {
-    const hash = new SpatialHash<HashEntry>(1.5, 1.5, Math.ceil(GRID_COLS / 1.5) + 4);
+    const hash = this.spatialHash;
+    hash.clear();
 
     this.mushrooms.forEach((m) => hash.insert(m.col, m.row, { type: "mushroom", col: m.col, row: m.row }));
     for (const chain of this.millipede.chains) {

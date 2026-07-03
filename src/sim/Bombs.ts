@@ -27,10 +27,11 @@ export class BombSystem {
       bomb.blastTimer -= dt;
       if (bomb.blastTimer <= 0) {
         bomb.alive = false;
+        bomb.detonating = false;
         onExpire(bomb);
       }
     }
-    this.bombs = this.bombs.filter((b) => b.alive || b.detonating);
+    this.bombs = this.bombs.filter((b) => b.alive);
   }
 
   detonate(bomb: Bomb): void {

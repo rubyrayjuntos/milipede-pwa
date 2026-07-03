@@ -23,6 +23,7 @@ export class AudioEngine {
 
   private grainTimer: number | null = null;
   private proximity = 0;
+  private noiseBuffer: AudioBuffer | null = null;
 
   get ready(): boolean {
     return this.ctx !== null;
@@ -95,13 +96,15 @@ export class AudioEngine {
     const now = ctx.currentTime;
     const duration = 1.1;
 
-    const bufferSize = Math.floor(ctx.sampleRate * duration);
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    if (!this.noiseBuffer) {
+      const bufferSize = Math.floor(ctx.sampleRate * duration);
+      this.noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = this.noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    }
 
     const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
+    noise.buffer = this.noiseBuffer;
 
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";

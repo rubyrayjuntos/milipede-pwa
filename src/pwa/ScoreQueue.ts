@@ -27,10 +27,12 @@ export async function submitHighScore(score: number): Promise<void> {
     tx.onerror = () => reject(tx.error);
   });
 
-  const reg = await navigator.serviceWorker.ready.catch(() => null);
-  const syncCapableReg = reg as (ServiceWorkerRegistration & { sync?: { register(tag: string): Promise<void> } }) | null;
-  if (syncCapableReg?.sync) {
-    await syncCapableReg.sync.register("flush-scores").catch(() => {});
+  if ("serviceWorker" in navigator) {
+    const reg = await navigator.serviceWorker.ready.catch(() => null);
+    const syncCapableReg = reg as (ServiceWorkerRegistration & { sync?: { register(tag: string): Promise<void> } }) | null;
+    if (syncCapableReg?.sync) {
+      await syncCapableReg.sync.register("flush-scores").catch(() => {});
+    }
   }
 }
 
