@@ -1,0 +1,118 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #03000a;
+  font-family: "Courier New", monospace;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+#game-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffffaa, 0 0 2px #ffffff;
+}
+
+.hud-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  font-size: clamp(0.75rem, 2vw, 1.1rem);
+  letter-spacing: 0.08em;
+}
+
+.hud-stat {
+  background: rgba(10, 0, 25, 0.4);
+  border: 1px solid #ff00ff55;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+}
+
+.hud-menu, .hud-gameover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  pointer-events: auto;
+  background: radial-gradient(ellipse at center, #10002599 0%, #03000acc 70%);
+}
+
+.hud-menu h1, .hud-gameover h1 {
+  font-size: clamp(2rem, 8vw, 4rem);
+  color: #ff00ff;
+  text-shadow: 0 0 20px #ff00ffcc, 0 0 4px #fff;
+  letter-spacing: 0.15em;
+}
+
+.subtitle {
+  color: #00ffffaa;
+  letter-spacing: 0.1em;
+  font-size: clamp(0.7rem, 2vw, 1rem);
+}
+
+.hint {
+  max-width: 32rem;
+  font-size: clamp(0.6rem, 1.6vw, 0.85rem);
+  color: #ff149377;
+  padding: 0 1rem;
+}
+
+button {
+  pointer-events: auto;
+  background: transparent;
+  border: 2px solid #00ffff;
+  color: #00ffff;
+  font-family: inherit;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  letter-spacing: 0.1em;
+  padding: 0.75rem 2rem;
+  cursor: pointer;
+  text-shadow: 0 0 8px #00ffffaa;
+  box-shadow: 0 0 16px #00ffff44 inset;
+  border-radius: 6px;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 16px #00ffff44 inset; }
+  50% { box-shadow: 0 0 28px #00ffff99 inset; }
+}
+
+.hud-gameover p {
+  color: #ff1493;
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  letter-spacing: 0.08em;
+}
+
+.hud-gameover .best {
+  color: #ff00ffaa;
+  font-size: clamp(0.8rem, 2vw, 1.1rem);
+}
